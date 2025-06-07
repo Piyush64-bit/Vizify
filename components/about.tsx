@@ -4,16 +4,23 @@ import type React from "react"
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Github, Linkedin, Mail, Award, Code, Lightbulb, Camera, X } from "lucide-react"
+import { Github, Linkedin, Mail, Award, Code, Lightbulb, Camera, X, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function About() {
-  const [creatorImage, setCreatorImage] = useState<string>("/images/stuti-gupta.png")
+  const [creatorImage, setCreatorImage] = useState<string>("")
   const [isUploading, setIsUploading] = useState(false)
+  const [dragActive, setDragActive] = useState(false)
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      processFile(file)
+    }
+  }
+
+  const processFile = (file: File) => {
+    if (file.type.startsWith("image/")) {
       setIsUploading(true)
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -24,8 +31,28 @@ export default function About() {
     }
   }
 
-  const resetToDefault = () => {
-    setCreatorImage("/images/stuti-gupta.png")
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true)
+    } else if (e.type === "dragleave") {
+      setDragActive(false)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0])
+    }
+  }
+
+  const removeImage = () => {
+    setCreatorImage("")
   }
 
   return (
@@ -53,8 +80,16 @@ export default function About() {
           >
             <div className="flex flex-col lg:flex-row items-center gap-8">
               <div className="flex-shrink-0 relative">
-                <div className="w-48 h-48 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center overflow-hidden relative group p-1">
-                  <div className="w-full h-full bg-black rounded-full overflow-hidden">
+                <div
+                  className={`w-48 h-48 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center overflow-hidden relative group p-1 transition-all duration-300 ${
+                    dragActive ? "scale-105 shadow-lg shadow-purple-500/50" : ""
+                  }`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <div className="w-full h-full bg-black rounded-full overflow-hidden relative">
                     {creatorImage ? (
                       <img
                         src={creatorImage || "/placeholder.svg"}
@@ -63,40 +98,54 @@ export default function About() {
                         onError={() => setCreatorImage("")}
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
-                        <span className="text-6xl font-bold text-white">SG</span>
+                      <div className="w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 flex flex-col items-center justify-center">
+                        <span className="text-6xl font-bold text-white mb-2">SG</span>
+                        <div className="text-xs text-white/70 text-center px-4">
+                          <Upload className="w-4 h-4 mx-auto mb-1" />
+                          <p>Drop image here</p>
+                          <p>or click to upload</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Upload overlay */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-full">
+                      <label htmlFor="image-upload" className="cursor-pointer">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
+                        <input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full">
+                        <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full"></div>
+                      </div>
+                    )}
+
+                    {dragActive && (
+                      <div className="absolute inset-0 bg-purple-500/30 flex items-center justify-center rounded-full border-2 border-dashed border-white">
+                        <div className="text-white text-center">
+                          <Upload className="w-8 h-8 mx-auto mb-2" />
+                          <p className="text-sm font-medium">Drop your image here</p>
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {/* Upload overlay */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-full">
-                    <label htmlFor="image-upload" className="cursor-pointer">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
-                        <Camera className="w-6 h-6 text-white" />
-                      </div>
-                      <input
-                        id="image-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full">
-                      <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full"></div>
-                    </div>
-                  )}
                 </div>
 
-                {creatorImage && creatorImage !== "/images/stuti-gupta.png" && (
+                {creatorImage && (
                   <button
-                    onClick={resetToDefault}
+                    onClick={removeImage}
                     className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
-                    title="Reset to default image"
+                    title="Remove image"
                   >
                     <X className="w-4 h-4" />
                   </button>
