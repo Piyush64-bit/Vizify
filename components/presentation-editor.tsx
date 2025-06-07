@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,7 +8,23 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Edit3, Save, Eye, Plus, Trash2, Copy, Palette, Type, Download, Undo, Redo } from "lucide-react"
+import {
+  Edit3,
+  Save,
+  Eye,
+  Plus,
+  Trash2,
+  Copy,
+  Palette,
+  Type,
+  Download,
+  Undo,
+  Redo,
+  ChevronUp,
+  ChevronDown,
+  ImageIcon,
+} from "lucide-react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface SlideData {
   id: number
@@ -49,6 +65,32 @@ export default function PresentationEditor({
     "from-pink-500 to-rose-500",
     "from-violet-500 to-purple-500",
   ]
+
+  const iconOptions = [
+    "Heart",
+    "Brain",
+    "Stethoscope",
+    "Activity",
+    "Shield",
+    "TrendingUp",
+    "Database",
+    "Users",
+    "Zap",
+    "Target",
+    "AlertTriangle",
+    "CheckCircle",
+    "BarChart3",
+    "Microscope",
+    "Cpu",
+    "Globe",
+  ]
+
+  useEffect(() => {
+    // Auto-select the first slide for editing when entering edit mode
+    if (slides.length > 0 && !editingSlide) {
+      startEditing(slides[selectedSlide])
+    }
+  }, [])
 
   const saveToHistory = (newSlides: SlideData[]) => {
     const newHistory = history.slice(0, historyIndex + 1)
@@ -96,13 +138,14 @@ export default function PresentationEditor({
       subtitle: "Subtitle",
       content: "Add your content here...",
       gradient: gradientOptions[Math.floor(Math.random() * gradientOptions.length)],
-      icon: "Brain",
+      icon: iconOptions[Math.floor(Math.random() * iconOptions.length)],
     }
 
     const newSlides = [...slides, newSlide]
     saveToHistory(newSlides)
     onSlidesChange(newSlides)
     setSelectedSlide(newSlides.length - 1)
+    startEditing(newSlide)
   }
 
   const deleteSlide = (slideId: number) => {
@@ -114,6 +157,11 @@ export default function PresentationEditor({
 
     if (selectedSlide >= newSlides.length) {
       setSelectedSlide(newSlides.length - 1)
+    }
+
+    // If we're deleting the slide we're currently editing, clear the editing state
+    if (editingSlide && editingSlide.id === slideId) {
+      setEditingSlide(null)
     }
   }
 
@@ -129,21 +177,34 @@ export default function PresentationEditor({
 
     saveToHistory(newSlides)
     onSlidesChange(newSlides)
+    setSelectedSlide(slideIndex + 1)
+    startEditing(newSlide)
   }
 
-  const moveSlide = (fromIndex: number, toIndex: number) => {
+  const moveSlide = (slideId: number, direction: "up" | "down") => {
+    const currentIndex = slides.findIndex((s) => s.id === slideId)
+    if ((direction === "up" && currentIndex === 0) || (direction === "down" && currentIndex === slides.length - 1)) {
+      return
+    }
+
+    const newIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1
     const newSlides = [...slides]
-    const [movedSlide] = newSlides.splice(fromIndex, 1)
-    newSlides.splice(toIndex, 0, movedSlide)
+    const [movedSlide] = newSlides.splice(currentIndex, 1)
+    newSlides.splice(newIndex, 0, movedSlide)
 
     saveToHistory(newSlides)
     onSlidesChange(newSlides)
-    setSelectedSlide(toIndex)
+    setSelectedSlide(newIndex)
   }
 
   const updateSlideGradient = (gradient: string) => {
     if (!editingSlide) return
     setEditingSlide({ ...editingSlide, gradient })
+  }
+
+  const updateSlideIcon = (icon: string) => {
+    if (!editingSlide) return
+    setEditingSlide({ ...editingSlide, icon })
   }
 
   const exportPresentation = () => {
@@ -220,65 +281,85 @@ export default function PresentationEditor({
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-2 max-h-96 overflow-y-auto">
-            {slides.map((slide, index) => (
-              <motion.div
-                key={slide.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                  selectedSlide === index
-                    ? "border-purple-500 bg-purple-500/20"
-                    : "border-white/10 bg-white/5 hover:border-purple-500/50"
-                }`}
-                onClick={() => setSelectedSlide(index)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">
-                      {index + 1}. {slide.title}
-                    </p>
-                    <p className="text-gray-400 text-xs truncate">{slide.subtitle}</p>
-                  </div>
-                  <div className="flex items-center gap-1 ml-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        startEditing(slide)
-                      }}
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-white"
-                    >
-                      <Edit3 className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        duplicateSlide(slide)
-                      }}
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-white"
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteSlide(slide.id)
-                      }}
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-400"
-                      disabled={slides.length <= 1}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          <CardContent className="p-0">
+            <ScrollArea className="h-[500px] pr-4">
+              <div className="space-y-2 px-4 pb-4">
+                {slides.map((slide, index) => (
+                  <motion.div
+                    key={slide.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                      selectedSlide === index
+                        ? "border-purple-500 bg-purple-500/20"
+                        : "border-white/10 bg-white/5 hover:border-purple-500/50"
+                    }`}
+                    onClick={() => {
+                      setSelectedSlide(index)
+                      startEditing(slide)
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate">
+                          {index + 1}. {slide.title}
+                        </p>
+                        <p className="text-gray-400 text-xs truncate">{slide.subtitle}</p>
+                      </div>
+                      <div className="flex items-center gap-1 ml-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            moveSlide(slide.id, "up")
+                          }}
+                          disabled={index === 0}
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                        >
+                          <ChevronUp className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            moveSlide(slide.id, "down")
+                          }}
+                          disabled={index === slides.length - 1}
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            duplicateSlide(slide)
+                          }}
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            deleteSlide(slide.id)
+                          }}
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-red-400"
+                          disabled={slides.length <= 1}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 
@@ -287,7 +368,9 @@ export default function PresentationEditor({
           {editingSlide ? (
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
-                <CardTitle className="text-white">Edit Slide {editingSlide.id}</CardTitle>
+                <CardTitle className="text-white">
+                  Edit Slide {slides.findIndex((s) => s.id === editingSlide.id) + 1}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="content" className="w-full">
@@ -301,7 +384,7 @@ export default function PresentationEditor({
                       Design
                     </TabsTrigger>
                     <TabsTrigger value="media" className="data-[state=active]:bg-purple-600">
-                      <Image className="w-4 h-4 mr-2" />
+                      <ImageIcon className="w-4 h-4 mr-2" />
                       Media
                     </TabsTrigger>
                   </TabsList>
@@ -369,11 +452,30 @@ export default function PresentationEditor({
                         ))}
                       </div>
                     </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-white">Slide Icon</Label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {iconOptions.map((icon, index) => (
+                          <button
+                            key={index}
+                            onClick={() => updateSlideIcon(icon)}
+                            className={`h-12 rounded-lg bg-white/5 border-2 transition-all flex items-center justify-center ${
+                              editingSlide.icon === icon
+                                ? "border-purple-500"
+                                : "border-transparent hover:border-gray-400"
+                            }`}
+                          >
+                            <span className="text-white">{icon}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="media" className="space-y-4 mt-4">
                     <div className="text-center text-gray-400 py-8">
-                      <Image className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p>Media upload functionality</p>
                       <p className="text-sm">Coming soon...</p>
                     </div>
