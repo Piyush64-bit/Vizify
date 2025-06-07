@@ -14,6 +14,7 @@ interface ImageUploadProps {
   shape?: "circle" | "square"
   placeholder?: string
   showRemoveButton?: boolean
+  clickable?: boolean
 }
 
 export default function ImageUpload({
@@ -24,6 +25,7 @@ export default function ImageUpload({
   shape = "circle",
   placeholder = "Upload Image",
   showRemoveButton = true,
+  clickable = true,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
@@ -112,13 +114,15 @@ export default function ImageUpload({
     [processFile],
   )
 
-  const removeImage = () => {
+  const removeImage = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     onImageChange(null)
     setError(null)
   }
 
-  const isDefaultImage = currentImage?.startsWith("/images/")
-  const showPlaceholder = !currentImage || (!currentImage.startsWith("data:") && !currentImage.startsWith("/images/"))
+  const isDefaultImage = currentImage?.startsWith("http") || currentImage?.startsWith("/images/")
+  const showPlaceholder = !currentImage || (!currentImage.startsWith("data:") && !isDefaultImage)
 
   return (
     <div className={`relative ${className}`}>
@@ -133,14 +137,14 @@ export default function ImageUpload({
           group 
           transition-all 
           duration-300 
-          cursor-pointer
+          ${clickable ? "cursor-pointer" : ""}
           ${dragActive ? "scale-105 shadow-lg shadow-purple-500/50" : ""}
           ${shape === "circle" ? "p-1" : "p-2"}
         `}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
+        onDragEnter={clickable ? handleDrag : undefined}
+        onDragLeave={clickable ? handleDrag : undefined}
+        onDragOver={clickable ? handleDrag : undefined}
+        onDrop={clickable ? handleDrop : undefined}
       >
         <div className={`w-full h-full bg-black ${shapeClasses[shape]} overflow-hidden relative`}>
           {currentImage && !showPlaceholder ? (
@@ -158,11 +162,13 @@ export default function ImageUpload({
               {size === "lg" ? (
                 <>
                   <span className="text-6xl font-bold text-white mb-2">SG</span>
-                  <div className="text-xs text-white/70 text-center px-4">
-                    <Upload className="w-4 h-4 mx-auto mb-1" />
-                    <p>Drop image here</p>
-                    <p>or click to upload</p>
-                  </div>
+                  {clickable && (
+                    <div className="text-xs text-white/70 text-center px-4">
+                      <Upload className="w-4 h-4 mx-auto mb-1" />
+                      <p>Drop image here</p>
+                      <p>or click to upload</p>
+                    </div>
+                  )}
                 </>
               ) : (
                 <span className="text-2xl font-bold text-white">SG</span>
@@ -170,17 +176,19 @@ export default function ImageUpload({
             </div>
           )}
 
-          {/* Upload overlay */}
-          <div
-            className={`absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center ${shapeClasses[shape]}`}
-          >
-            <label htmlFor="image-upload" className="cursor-pointer">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
-              <input id="image-upload" type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-            </label>
-          </div>
+          {/* Upload overlay - only show if clickable */}
+          {clickable && (
+            <div
+              className={`absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center ${shapeClasses[shape]}`}
+            >
+              <label htmlFor="image-upload" className="cursor-pointer">
+                <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
+                  <Camera className="w-6 h-6 text-white" />
+                </div>
+                <input id="image-upload" type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+              </label>
+            </div>
+          )}
 
           {/* Loading state */}
           {isUploading && (
@@ -190,7 +198,7 @@ export default function ImageUpload({
           )}
 
           {/* Drag active overlay */}
-          {dragActive && (
+          {dragActive && clickable && (
             <div
               className={`absolute inset-0 bg-purple-500/30 flex items-center justify-center ${shapeClasses[shape]} border-2 border-dashed border-white`}
             >
