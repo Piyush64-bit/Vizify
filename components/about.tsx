@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button"
 import ImageUpload from "@/components/image-upload"
 
 export default function About() {
-  // Using external URL for the default image
-  const defaultImageUrl =
-    "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face&auto=format"
+  // Using the professional photo as default
+  const defaultImageUrl = "/images/stuti-professional.jpg"
 
   const [creatorImage, setCreatorImage] = useState<string | null>(defaultImageUrl)
 
