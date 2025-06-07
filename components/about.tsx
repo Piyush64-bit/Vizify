@@ -7,8 +7,14 @@ import { Button } from "@/components/ui/button"
 import ImageUpload from "@/components/image-upload"
 
 export default function About() {
-  // Set the default image to the PNG file we added
-  const [creatorImage, setCreatorImage] = useState<string | null>("/images/stuti-gupta-profile.png")
+  // Option 1: Use a direct URL (no file needed in repo)
+  const defaultImageUrl =
+    "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face&auto=format"
+
+  // Option 2: Use local file (requires adding file to repo)
+  // const defaultImageUrl = "/images/stuti-gupta-profile.png"
+
+  const [creatorImage, setCreatorImage] = useState<string | null>(defaultImageUrl)
 
   return (
     <section id="about" className="py-20 px-6 bg-white/[0.02]">
@@ -79,7 +85,7 @@ export default function About() {
                     <Linkedin className="mr-2 h-4 w-4" />
                     LinkedIn
                   </Button>
-                  <Button variant="outline" className="text-white border-purple-500 hover:bg-purple-service/20">
+                  <Button variant="outline" className="text-white border-purple-500 hover:bg-purple-500/20">
                     <Mail className="mr-2 h-4 w-4" />
                     Contact
                   </Button>
