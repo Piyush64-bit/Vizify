@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import ImageUpload from "@/components/image-upload"
 
 export default function About() {
-  const [creatorImage, setCreatorImage] = useState<string | null>(null)
+  // Set the default image to the PNG file we added
+  const [creatorImage, setCreatorImage] = useState<string | null>("/images/stuti-gupta-profile.png")
 
   return (
     <section id="about" className="py-20 px-6 bg-white/[0.02]">
@@ -78,7 +79,7 @@ export default function About() {
                     <Linkedin className="mr-2 h-4 w-4" />
                     LinkedIn
                   </Button>
-                  <Button variant="outline" className="text-white border-purple-500 hover:bg-purple-500/20">
+                  <Button variant="outline" className="text-white border-purple-500 hover:bg-purple-service/20">
                     <Mail className="mr-2 h-4 w-4" />
                     Contact
                   </Button>

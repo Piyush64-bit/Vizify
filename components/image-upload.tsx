@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Camera, Upload, X, ImageIcon } from "lucide-react"
+import { Camera, Upload, X } from "lucide-react"
 
 interface ImageUploadProps {
   onImageChange: (imageUrl: string | null) => void
@@ -13,6 +13,7 @@ interface ImageUploadProps {
   size?: "sm" | "md" | "lg"
   shape?: "circle" | "square"
   placeholder?: string
+  showRemoveButton?: boolean
 }
 
 export default function ImageUpload({
@@ -22,6 +23,7 @@ export default function ImageUpload({
   size = "lg",
   shape = "circle",
   placeholder = "Upload Image",
+  showRemoveButton = true,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
@@ -115,6 +117,9 @@ export default function ImageUpload({
     setError(null)
   }
 
+  const isDefaultImage = currentImage?.startsWith("/images/")
+  const showPlaceholder = !currentImage || (!currentImage.startsWith("data:") && !currentImage.startsWith("/images/"))
+
   return (
     <div className={`relative ${className}`}>
       <div
@@ -138,10 +143,10 @@ export default function ImageUpload({
         onDrop={handleDrop}
       >
         <div className={`w-full h-full bg-black ${shapeClasses[shape]} overflow-hidden relative`}>
-          {currentImage ? (
+          {currentImage && !showPlaceholder ? (
             <img
               src={currentImage || "/placeholder.svg"}
-              alt="Uploaded image"
+              alt="Profile image"
               className="w-full h-full object-cover"
               onError={() => {
                 setError("Failed to load image")
@@ -152,11 +157,15 @@ export default function ImageUpload({
             <div className="w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 flex flex-col items-center justify-center text-white">
               {size === "lg" ? (
                 <>
-                  <ImageIcon className="w-8 h-8 mb-2 opacity-70" />
-                  <span className="text-sm text-center px-2 opacity-70">{placeholder}</span>
+                  <span className="text-6xl font-bold text-white mb-2">SG</span>
+                  <div className="text-xs text-white/70 text-center px-4">
+                    <Upload className="w-4 h-4 mx-auto mb-1" />
+                    <p>Drop image here</p>
+                    <p>or click to upload</p>
+                  </div>
                 </>
               ) : (
-                <ImageIcon className="w-6 h-6 opacity-70" />
+                <span className="text-2xl font-bold text-white">SG</span>
               )}
             </div>
           )}
@@ -194,8 +203,8 @@ export default function ImageUpload({
         </div>
       </div>
 
-      {/* Remove button */}
-      {currentImage && (
+      {/* Remove button - only show for uploaded images, not default images */}
+      {currentImage && !isDefaultImage && showRemoveButton && (
         <button
           onClick={removeImage}
           className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors z-10"
