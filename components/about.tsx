@@ -1,10 +1,33 @@
 "use client"
 
+import type React from "react"
+
+import { useState } from "react"
 import { motion } from "framer-motion"
-import { Github, Linkedin, Mail, Award, Code, Lightbulb } from "lucide-react"
+import { Github, Linkedin, Mail, Award, Code, Lightbulb, Camera, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function About() {
+  const [creatorImage, setCreatorImage] = useState<string>("/images/stuti-gupta.png")
+  const [isUploading, setIsUploading] = useState(false)
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setIsUploading(true)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setCreatorImage(e.target?.result as string)
+        setIsUploading(false)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const resetToDefault = () => {
+    setCreatorImage("/images/stuti-gupta.png")
+  }
+
   return (
     <section id="about" className="py-20 px-6 bg-white/[0.02]">
       <div className="container mx-auto">
@@ -29,10 +52,55 @@ export default function About() {
             className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10"
           >
             <div className="flex flex-col lg:flex-row items-center gap-8">
-              <div className="flex-shrink-0">
-                <div className="w-48 h-48 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
-                  <span className="text-6xl font-bold text-white">SG</span>
+              <div className="flex-shrink-0 relative">
+                <div className="w-48 h-48 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center overflow-hidden relative group p-1">
+                  <div className="w-full h-full bg-black rounded-full overflow-hidden">
+                    {creatorImage ? (
+                      <img
+                        src={creatorImage || "/placeholder.svg"}
+                        alt="Stuti Gupta - AI Researcher & Full-Stack Developer"
+                        className="w-full h-full object-cover"
+                        onError={() => setCreatorImage("")}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+                        <span className="text-6xl font-bold text-white">SG</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-full">
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
+                        <Camera className="w-6 h-6 text-white" />
+                      </div>
+                      <input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-full">
+                      <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full"></div>
+                    </div>
+                  )}
                 </div>
+
+                {creatorImage && creatorImage !== "/images/stuti-gupta.png" && (
+                  <button
+                    onClick={resetToDefault}
+                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                    title="Reset to default image"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
               <div className="flex-1 text-center lg:text-left">
