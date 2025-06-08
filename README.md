@@ -101,37 +101,36 @@ npm run dev       # or yarn dev
 
 ---
 
-## 📬 Support & Contact
+## 🧠 Contact and Support 
 
-We’re always excited to hear from researchers, educators, and innovators!
+We love hearing from curious minds — whether you're a researcher, educator, or just vibing with innovation.
 
-- 💌 **Email**: [stuticoder123@gmail.com](mailto:stuticoder123@gmail.com)  
-- 💼 **LinkedIn**: [Stuti Gupta](https://www.linkedin.com/in/stuticoder1/)  
-- 🌐 **Community**: *Coming Soon on Discord!*  
-- 🧠 **Project Updates**: Follow for sneak peeks, features, and future plans!
-
----
-
-## 🧡 Acknowledgments
-
-> Great tech is built on collaboration, creativity, and community.
-
-- 🛠️ Crafted with care by [**Stuti Gupta**](https://www.linkedin.com/in/stuticoder1/)
-- 🚀 Powered by [**Next.js**](https://nextjs.org/) & deployed on [**Vercel**](https://vercel.com/)
-- 🎨 UI components styled with [**Tailwind CSS**](https://tailwindcss.com/) & [**shadcn/ui**](https://ui.shadcn.com/)
-- 🖌️ Icons from [**Lucide React**](https://lucide.dev/)
-- 🙏 Special thanks to the incredible [**open-source community**](https://github.com/)
+- 💌 *Drop a Line*: [stuticoder123@gmail.com](mailto:stuticoder123@gmail.com)  
+- 💼 *Let's Connect*: [Stuti Gupta on LinkedIn](https://www.linkedin.com/in/stuticoder1/)  
+- 🌐 *Join the Squad: *Discord Community — launching soon!  
+- 🔔 *Stay in the Loop*: Follow for sneak peeks, behind-the-scenes, and roadmap reveals!
 
 ---
 
-## ⭐ Show Some Love
+## 🧡 Built With Gratitude
 
-If you found **Vizify - ResearchAI** helpful, inspiring, or even a little bit cool:
+> “Alone we can do so little; together we can do so much.” — Helen Keller
 
-- 🌟 Star this repo to show support
-- 🍴 Fork the project to experiment or contribute
-- 📢 Share with fellow researchers, creators & techies
-- 🧑‍💻 Open issues or suggest features — your feedback makes us better
+- ✨ Made with love by [*Stuti Gupta*](https://www.linkedin.com/in/stuticoder1/)  
+- 🧬 Engineered using [*Next.js](https://nextjs.org/) & hosted on [Vercel*](https://vercel.com/)  
+- 🎨 Styled to perfection with [*Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui*](https://ui.shadcn.com/)  
+- 🖼 Icon magic from [*Lucide React*](https://lucide.dev/)  
+- 🙌 Powered by passion — and the amazing [*open-source fam*](https://github.com/)
 
-> 🫶 Let’s make research more **accessible**, **engaging**, and **impactful** — together.
+---
 
+## ⭐ Spread the Word
+
+Found *Vizify - ResearchAI* useful, slick, or just your vibe?
+
+- 🌟 Give it a *star* — it means the world  
+- 🍴 Fork it — play around or build your twist  
+- 📣 Share it — with your lab mates, content peeps & dev buddies  
+- 💡 Drop your ideas — feedback = future features!
+
+> 🚀 Let’s reimagine how the world sees research — one click, one insight, one vibe at a time.
