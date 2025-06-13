@@ -14,10 +14,10 @@ export default function About() {
 
   // Creator's social links
   const creatorLinks = {
-    portfolio: "https://stutigupta.dev", // Replace with actual portfolio URL
+    portfolio: "https://v0-portfolio-website-makeover-seven.vercel.app/", // Replace with actual portfolio URL
     github: "https://github.com/stuticoder123", // Updated with actual GitHub URL
     linkedin: "https://www.linkedin.com/in/stuticoder1/", // Updated with actual LinkedIn URL
-    email: "mailto:stuti@researchai.com", // Replace with actual email
+    email: "mailto:stuticoder123@gmail.com", // Replace with actual email
   }
 
   return (
