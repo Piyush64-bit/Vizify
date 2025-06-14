@@ -97,15 +97,15 @@ export default function About() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div className="flex items-center justify-center lg:justify-start gap-2">
                     <Code className="w-5 h-5 text-purple-400" />
-                    <span className="text-gray-300">Full-Stack Dev</span>
+                    <span className="text-gray-300">Tech Enthusiast</span>
                   </div>
                   <div className="flex items-center justify-center lg:justify-start gap-2">
                     <Lightbulb className="w-5 h-5 text-purple-400" />
-                    <span className="text-gray-300">AI Researcher</span>
+                    <span className="text-gray-300">Innovation Leader</span>
                   </div>
                   <div className="flex items-center justify-center lg:justify-start gap-2">
                     <Award className="w-5 h-5 text-purple-400" />
-                    <span className="text-gray-300">Innovation Leader</span>
+                    <span className="text-gray-300">LinkedIn Influencer</span>
                   </div>
                 </div>
 
